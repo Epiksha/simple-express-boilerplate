@@ -1,21 +1,23 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     username: {
         type: String,
-        unique: true,
+        required: [true, 'Name is required.']
     },
-});
-
-userSchema.statics.findByLogin = async function (login) {
-    let user = await this.findOne({ username: login, });
-
-    if (!user) {
-        user = await this.findOne({ email: login });
+    email: {
+        type: String,
+        required: [true, 'Email is required.']
+    },
+    dob: {
+        type: String,
+        required: [true, 'Date of birth is required.']
+    },
+    password: {
+        type: String,
+        required: [true, 'A password is required.']
     }
-
-    return user;
-};
+});
 
 const User = mongoose.model('User', userSchema);
 
