@@ -2,28 +2,34 @@
 	"name": "simple-express-boilerplate",
 	"version": "1.0.0",
 	"description": "A simple Express app setup with MongoDB",
-	"main": "index.js",
+	"main": "app.js",
 	"keywords": [
 		"express",
 		"mongodb"
 	],
+	"engines": {
+		"node": "10.16.0"
+	},
 	"scripts": {
-		"start": "nodemon --exec babel-node src/index.js",
+		"start": "cross-env NODE_ENV=development nodemon app.js",
+		"prod": "node app.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"@babel/core": "^7.6.0",
-		"@babel/node": "^7.6.1",
-		"@babel/preset-env": "^7.6.0",
+		"cross-env": "^7.0.2",
 		"nodemon": "^1.19.2"
 	},
 	"dependencies": {
 		"body-parser": "^1.19.0",
+		"connect-history-api-fallback": "^1.6.0",
 		"cors": "^2.8.5",
+		"dotenv": "^8.2.0",
 		"express": "^4.17.1",
+		"express-async-handler": "^1.1.4",
 		"mongodb": "^3.3.2",
-		"mongoose": "^5.7.1"
+		"mongoose": "^5.7.1",
+		"morgan": "^1.9.1"
 	}
 }
