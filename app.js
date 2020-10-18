@@ -1,27 +1,28 @@
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const express = require('express');
-const path = require('path');
 const dotenv = require('dotenv');
+const express = require('express');
+const logger = require('./utilities/logger.js');
 
-const history = require('connect-history-api-fallback');
-const morgan = require('morgan');
+const mongoSetup = require('./services/mongo.js');
+const normalizePort = require('./utilities/normalizePort.js');
+const router = require('./router.js');
 
-const router = require('./router');
-const config = require('./config/main');
+/* Allows use of environmental variables from .env file */
+dotenv.config()
 
+/* MongoDB Setup */
+mongoSetup();
+
+/* Server Setup */
 const app = express();
-const staticFileMiddleware = express.static(path.join(__dirname, 'public'));
-dotenv.config();
+const port = normalizePort(process.env.PORT || '8080');
 
-// Middleware
-app.use(cors(config.cors));
-app.options('*', cors(config.cors));
-app.use(history(config.history));
-app.use(morgan('combined'));
-app.use(staticFileMiddleware);
-
-// Router
-app.use('/', router);
+app.use(cors({ origin: process.env.CLIENT_URL || 'localhost:3000' })); // CORS configuration
+app.use(cookieParser()); // Allows cookies to be sent from client
+app.use(express.urlencoded({ extended: false })); // Allows form data to be sent from client
+app.use(express.json()); // body-parser middleware, allows request bodies to be sent
+app.use(router); // Enables route handling from router file
 
 // Boot
-app.listen(process.env.PORT, console.log(`Express app listening on port ${process.env.PORT}.`));
+app.listen(port, logger.info(`Express app listening on port ${port}.`));
