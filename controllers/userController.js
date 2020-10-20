@@ -2,7 +2,7 @@
 
 require('../models/userModel.js');
 
-const jwt = require('json-web-token');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('mongoose').model('User');
 
@@ -27,24 +27,28 @@ const register = (req, res) => {
 
 // Login
 const login = (req, res) => {
-    User.findOne({ email: req.body.email },
-    (err, user) => {
-        if (err) {
-            throw err;
-        }
+    User.findOne(
+        { email: req.body.email },
+        (err, user) => {
+            if (err) {
+                throw err;
+            }
 
-        if (!user || !user.comparePassword(req.body.password)) {
-            return res.status(401).json({
-                message: 'Authentication failed. Invalid user or password.'
-            });
+            if (!user || !bcrypt.compare(req.body.password, user.password)) {
+                return res.status(401).json({
+                    message: 'Authentication failed. Invalid email or password.'
+                });
+            }
+
+            const token = jwt.sign({
+                email: user.email,
+                fullName: user.fullName,
+                _id: user._id
+            }, 'boilerplateToken')
+            
+            return res.json({ token });
         }
-        
-        return res.json({ token: jwt.sign({
-            email: user.email,
-            fullName: user.fullName,
-            _id: user._id
-        }, 'RESTFULAPIs')});
-    });
+    );
 };
 
 // Other middleware
